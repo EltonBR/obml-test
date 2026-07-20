@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+
+  <!-- Útil para comparar comportamento mobile -->
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Teste Opera Mini OBML</title>
+
+  <style>
+    /*
+     * CSS geral simples para facilitar a comparação
+     * entre HTML original, DOM e renderização OBML.
+     */
+
+    body {
+      margin: 8px;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      color: #202020;
+      background-color: #eeeeee;
+    }
+
+    h1 {
+      color: #003399;
+      font-size: 24px;
+    }
+
+    h2 {
+      color: #333333;
+      font-size: 18px;
+      border-bottom: 1px solid #999999;
+    }
+
+    section {
+      margin: 12px 0;
+      padding: 10px;
+      background: #ffffff;
+      border: 1px solid #aaaaaa;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font-size: 14px;
+      margin: 3px;
+    }
+
+    .inline-test {
+      color: #990000;
+      background-color: #ffff99;
+      border: 1px solid #cc9900;
+    }
+
+    .display-block {
+      display: block;
+      margin: 4px 0;
+      padding: 4px;
+      background-color: #ddeeff;
+    }
+
+    .display-inline-block {
+      display: inline-block;
+      width: 100px;
+      height: 35px;
+      padding: 5px;
+      margin: 4px;
+      border: 1px solid #006699;
+      background-color: #ccffff;
+    }
+
+    .hidden-by-css {
+      display: none;
+    }
+
+    /*
+     * Div pedido para testar box model:
+     * margin, padding, width, height, color,
+     * background, border-color e border-size.
+     */
+    #box-model-test {
+      margin-top: 20px;
+      margin-right: 15px;
+      margin-bottom: 25px;
+      margin-left: 10px;
+
+      padding-top: 12px;
+      padding-right: 18px;
+      padding-bottom: 14px;
+      padding-left: 20px;
+
+      width: 220px;
+      height: 100px;
+
+      color: #ffffff;
+      background-color: #336699;
+
+      border-style: solid;
+      border-width: 6px;
+      border-color: #ff6600;
+
+      font-size: 16px;
+      overflow: auto;
+    }
+
+    #event-log {
+      min-height: 80px;
+      max-height: 220px;
+      overflow: auto;
+      padding: 6px;
+      color: #00ff00;
+      background-color: #111111;
+      border: 2px inset #777777;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+
+    #position-container {
+      position: relative;
+      width: 280px;
+      height: 120px;
+      border: 2px solid #444444;
+      background-color: #dddddd;
+    }
+
+    #absolute-element {
+      position: absolute;
+      top: 15px;
+      right: 12px;
+      width: 100px;
+      height: 40px;
+      color: white;
+      background-color: purple;
+    }
+
+    .float-left {
+      float: left;
+      width: 80px;
+      height: 50px;
+      margin-right: 8px;
+      background-color: #ffcccc;
+      border: 1px solid red;
+    }
+
+    .clear {
+      clear: both;
+    }
+
+    table {
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 5px;
+      border: 1px solid #555555;
+    }
+
+    th {
+      background-color: #cccccc;
+    }
+
+    .pseudo-test:hover {
+      color: white;
+      background-color: red;
+    }
+
+    @media screen and (max-width: 300px) {
+      body {
+        background-color: #ffffdd;
+      }
+
+      .media-status::after {
+        content: " largura menor ou igual a 300px";
+      }
+    }
+  </style>
+</head>
+
+<body
+  onload="logEvent('body.onload executado')"
+  onclick="bodyClick(event)"
+>
+
+  <header>
+    <h1>Teste de elementos HTML para OBML</h1>
+
+    <p>
+      Página criada para verificar como o Opera Mini transforma HTML,
+      CSS e JavaScript em OBML.
+    </p>
+
+    <nav>
+      <a href="#textos">Textos</a> |
+      <a href="#formularios">Formulários</a> |
+      <a href="#css">CSS</a> |
+      <a href="#eventos">Eventos</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <section id="textos">
+      <h2>Textos e elementos inline</h2>
+
+      <div>
+        Este texto está dentro de uma <strong>div</strong>.
+      </div>
+
+      <p>
+        Parágrafo com
+        <span class="inline-test">span estilizado</span>,
+        <strong>strong</strong>,
+        <b>bold</b>,
+        <em>em</em>,
+        <i>italic</i>,
+        <u>underline</u>,
+        <s>riscado</s>,
+        <small>small</small>,
+        H<sub>2</sub>O e 2<sup>10</sup>.
+      </p>
+
+      <p>
+        Texto com quebra<br>
+        usando BR.
+      </p>
+
+      <pre>
+Texto dentro de PRE
+  mantém espaços
+    e quebras de linha.
+      </pre>
+
+      <blockquote cite="https://example.com">
+        Texto dentro de blockquote.
+      </blockquote>
+
+      <code>var teste = "elemento code";</code>
+
+      <hr>
+
+      <div class="display-block">Div display block 1</div>
+      <div class="display-block">Div display block 2</div>
+
+      <span class="display-inline-block">Inline block 1</span>
+      <span class="display-inline-block">Inline block 2</span>
+
+      <p class="media-status">Media query:</p>
+    </section>
+
+    <section>
+      <h2>Listas</h2>
+
+      <ul>
+        <li>Item não ordenado 1</li>
+        <li>Item não ordenado 2</li>
+        <li>
+          Item com lista interna
+          <ul>
+            <li>Subitem A</li>
+            <li>Subitem B</li>
+          </ul>
+        </li>
+      </ul>
+
+      <ol>
+        <li>Item ordenado 1</li>
+        <li>Item ordenado 2</li>
+        <li>Item ordenado 3</li>
+      </ol>
+
+      <dl>
+        <dt>OBML</dt>
+        <dd>Opera Binary Markup Language</dd>
+
+        <dt>MIDP</dt>
+        <dd>Mobile Information Device Profile</dd>
+      </dl>
+    </section>
+
+    <section>
+      <h2>Links</h2>
+
+      <p>
+        <a
+          href="https://example.com/?valor=123&amp;teste=abc"
+          onclick="logEvent('onclick no link externo')"
+        >
+          Link HTTPS
+        </a>
+      </p>
+
+      <p>
+        <a href="http://example.com/">Link HTTP</a>
+      </p>
+
+      <p>
+        <a href="mailto:teste@example.com">Link mailto</a>
+      </p>
+
+      <p>
+        <a href="tel:+5511999999999">Link telefone</a>
+      </p>
+
+      <p>
+        <a href="#box-model-test">Link para âncora</a>
+      </p>
+
+      <p>
+        <a
+          href="javascript:void(0)"
+          onclick="alert('javascript: executado'); return false;"
+        >
+          Link com javascript:
+        </a>
+      </p>
+    </section>
+
+    <section id="formularios">
+      <h2>Formulários e inputs</h2>
+
+      <form
+        id="test-form"
+        action="/submit-test"
+        method="get"
+        onsubmit="return formSubmit(event)"
+        onreset="logEvent('form.onreset')"
+      >
+
+        <fieldset>
+          <legend>Inputs de texto</legend>
+
+          <label for="text-input">Texto:</label>
+          <input
+            id="text-input"
+            name="texto"
+            type="text"
+            value="Valor inicial"
+            placeholder="Digite algo"
+            maxlength="40"
+            oninput="inputChanged(this)"
+            onchange="logEvent('text onchange: ' + this.value)"
+            onfocus="logEvent('text onfocus')"
+            onblur="logEvent('text onblur')"
+          >
+
+          <br>
+
+          <label for="password-input">Senha:</label>
+          <input
+            id="password-input"
+            name="senha"
+            type="password"
+            value="123456"
+            oninput="logEvent('password oninput, tamanho=' + this.value.length)"
+          >
+
+          <br>
+
+          <label for="search-input">Busca:</label>
+          <input
+            id="search-input"
+            name="busca"
+            type="search"
+            value="opera mini"
+          >
+
+          <br>
+
+          <label for="email-input">E-mail:</label>
+          <input
+            id="email-input"
+            name="email"
+            type="email"
+            value="teste@example.com"
+          >
+
+          <br>
+
+          <label for="url-input">URL:</label>
+          <input
+            id="url-input"
+            name="url"
+            type="url"
+            value="https://example.com"
+          >
+
+          <br>
+
+          <label for="tel-input">Telefone:</label>
+          <input
+            id="tel-input"
+            name="telefone"
+            type="tel"
+            value="11999999999"
+          >
+        </fieldset>
+
+        <fieldset>
+          <legend>Inputs numéricos e datas</legend>
+
+          <label for="number-input">Número:</label>
+          <input
+            id="number-input"
+            name="numero"
+            type="number"
+            min="0"
+            max="100"
+            step="5"
+            value="25"
+            oninput="logEvent('number=' + this.value)"
+          >
+
+          <br>
+
+          <label for="range-input">Range:</label>
+          <input
+            id="range-input"
+            name="range"
+            type="range"
+            min="0"
+            max="100"
+            value="40"
+            oninput="rangeOutput.value = this.value; logEvent('range=' + this.value)"
+          >
+          <output id="rangeOutput">40</output>
+
+          <br>
+
+          <label for="date-input">Data:</label>
+          <input
+            id="date-input"
+            name="data"
+            type="date"
+            value="2026-07-20"
+          >
+
+          <br>
+
+          <label for="time-input">Hora:</label>
+          <input
+            id="time-input"
+            name="hora"
+            type="time"
+            value="19:30"
+          >
+
+          <br>
+
+          <label for="datetime-input">Data e hora:</label>
+          <input
+            id="datetime-input"
+            name="datahora"
+            type="datetime-local"
+            value="2026-07-20T19:30"
+          >
+
+          <br>
+
+          <label for="month-input">Mês:</label>
+          <input
+            id="month-input"
+            name="mes"
+            type="month"
+            value="2026-07"
+          >
+
+          <br>
+
+          <label for="week-input">Semana:</label>
+          <input
+            id="week-input"
+            name="semana"
+            type="week"
+            value="2026-W30"
+          >
+        </fieldset>
+
+        <fieldset>
+          <legend>Seleção</legend>
+
+          <p>Checkboxes:</p>
+
+          <label>
+            <input
+              type="checkbox"
+              name="check1"
+              value="a"
+              checked
+              onclick="logEvent('checkbox A=' + this.checked)"
+            >
+            Opção A
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="check2"
+              value="b"
+              onclick="logEvent('checkbox B=' + this.checked)"
+            >
+            Opção B
+          </label>
+
+          <p>Radio buttons:</p>
+
+          <label>
+            <input
+              type="radio"
+              name="radio"
+              value="1"
+              checked
+              onchange="logEvent('radio=' + this.value)"
+            >
+            Radio 1
+          </label>
+
+          <label>
+            <input
+              type="radio"
+              name="radio"
+              value="2"
+              onchange="logEvent('radio=' + this.value)"
+            >
+            Radio 2
+          </label>
+
+          <br><br>
+
+          <label for="select-input">Select:</label>
+          <select
+            id="select-input"
+            name="select"
+            onchange="logEvent('select=' + this.value)"
+          >
+            <option value="">Escolha</option>
+            <option value="nokia">Nokia</option>
+            <option value="sony-ericsson">Sony Ericsson</option>
+            <option value="motorola">Motorola</option>
+            <option value="samsung">Samsung</option>
+          </select>
+
+          <br><br>
+
+          <label for="multiple-select">Select múltiplo:</label>
+          <select
+            id="multiple-select"
+            name="multiple"
+            multiple
+            size="4"
+          >
+            <option value="midp1">MIDP 1.0</option>
+            <option value="midp2">MIDP 2.0</option>
+            <option value="cldc10">CLDC 1.0</option>
+            <option value="cldc11">CLDC 1.1</option>
+          </select>
+        </fieldset>
+
+        <fieldset>
+          <legend>Outros controles</legend>
+
+          <label for="textarea-input">Textarea:</label><br>
+
+          <textarea
+            id="textarea-input"
+            name="textarea"
+            rows="4"
+            cols="30"
+            oninput="logEvent('textarea tamanho=' + this.value.length)"
+          >Texto inicial
+com duas linhas.</textarea>
+
+          <br>
+
+          <label for="color-input">Cor:</label>
+          <input
+            id="color-input"
+            name="cor"
+            type="color"
+            value="#336699"
+            oninput="changeBoxColor(this.value)"
+          >
+
+          <br>
+
+          <label for="file-input">Arquivo:</label>
+          <input
+            id="file-input"
+            name="arquivo"
+            type="file"
+            onchange="fileChanged(this)"
+          >
+
+          <br>
+
+          <input
+            type="hidden"
+            name="hidden-value"
+            value="valor-oculto-123"
+          >
+
+          <input
+            type="button"
+            value="Input button"
+            onclick="logEvent('input type=button clicado')"
+          >
+
+          <input
+            type="submit"
+            value="Input submit"
+          >
+
+          <input
+            type="reset"
+            value="Input reset"
+          >
+
+          <button
+            type="button"
+            onclick="buttonClicked(this)"
+          >
+            Elemento button
+          </button>
+        </fieldset>
+      </form>
+    </section>
+
+    <section id="css">
+      <h2>Box model CSS</h2>
+
+      <div id="box-model-test">
+        <strong>Box model test</strong><br>
+        width: 220px<br>
+        height: 100px<br>
+        margin: 20 15 25 10<br>
+        padding: 12 18 14 20<br>
+        border: 6px solid #ff6600<br>
+        color: #ffffff<br>
+        background: #336699
+      </div>
+
+      <button
+        type="button"
+        onclick="toggleBoxSize()"
+      >
+        Alterar tamanho do box
+      </button>
+
+      <button
+        type="button"
+        onclick="toggleBoxBorder()"
+      >
+        Alterar borda
+      </button>
+
+      <button
+        type="button"
+        onclick="toggleDisplay()"
+      >
+        Mostrar/ocultar box
+      </button>
+    </section>
+
+    <section>
+      <h2>Posicionamento e float</h2>
+
+      <div id="position-container">
+        Container position relative
+
+        <div id="absolute-element">
+          Position absolute
+        </div>
+      </div>
+
+      <br>
+
+      <div class="float-left">
+        Float left
+      </div>
+
+      <p>
+        Este texto deve fluir ao redor do elemento com float.
+        É útil para verificar se o servidor do Opera Mini preserva
+        ou transforma esse tipo de layout.
+      </p>
+
+      <div class="clear"></div>
+    </section>
+
+    <section>
+      <h2>Tabela</h2>
+
+      <table>
+        <caption>Tabela de aparelhos</caption>
+
+        <thead>
+          <tr>
+            <th>Fabricante</th>
+            <th>Modelo</th>
+            <th>Resolução</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>Nokia</td>
+            <td>1680 Classic</td>
+            <td>128 × 160</td>
+          </tr>
+
+          <tr>
+            <td>Nokia</td>
+            <td>C2-01</td>
+            <td>240 × 320</td>
+          </tr>
+
+          <tr>
+            <td>Sony Ericsson</td>
+            <td>K750i</td>
+            <td>176 × 220</td>
+          </tr>
+
+          <tr>
+            <td colspan="2">Colspan de duas células</td>
+            <td>Teste</td>
+          </tr>
+        </tbody>
+
+        <tfoot>
+          <tr>
+            <td colspan="3">Fim da tabela</td>
+          </tr>
+        </tfoot>
+      </table>
+    </section>
+
+    <section>
+      <h2>Imagem e mapa de imagem</h2>
+
+      <!-- SVG embutido em data URI para não depender da rede -->
+      <img
+        id="test-image"
+        alt="Imagem SVG de teste"
+        width="200"
+        height="100"
+        onclick="logEvent('imagem clicada')"
+        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='100'%3E%3Crect width='200' height='100' fill='%23336699'/%3E%3Ccircle cx='50' cy='50' r='30' fill='%23ffcc00'/%3E%3Ctext x='90' y='55' fill='white' font-size='16'%3EOBML%3C/text%3E%3C/svg%3E"
+      >
+
+      <p>
+        Caso a imagem não apareça, o Opera Mini pode não suportar
+        SVG em data URI nessa versão.
+      </p>
+    </section>
+
+    <section>
+      <h2>Elementos semânticos</h2>
+
+      <article>
+        <header>
+          <h3>Título do article</h3>
+        </header>
+
+        <p>Conteúdo dentro de article.</p>
+
+        <footer>
+          Rodapé do article.
+        </footer>
+      </article>
+
+      <aside>
+        Conteúdo dentro de aside.
+      </aside>
+
+      <details ontoggle="logEvent('details ontoggle: ' + this.open)">
+        <summary>Clique para abrir details</summary>
+        Conteúdo escondido dentro de details.
+      </details>
+
+      <p>
+        Progresso:
+        <progress value="65" max="100">65%</progress>
+      </p>
+
+      <p>
+        Medidor:
+        <meter min="0" max="100" low="30" high="80" value="72">
+          72
+        </meter>
+      </p>
+    </section>
+
+    <section id="eventos">
+      <h2>Eventos JavaScript</h2>
+
+      <div
+        id="click-div"
+        tabindex="0"
+        style="
+          padding: 15px;
+          background: #ccffcc;
+          border: 2px solid #339933;
+        "
+        onclick="logEvent('div onclick')"
+        ondblclick="logEvent('div ondblclick')"
+        onmousedown="logEvent('div onmousedown')"
+        onmouseup="logEvent('div onmouseup')"
+        onmouseover="logEvent('div onmouseover')"
+        onmouseout="logEvent('div onmouseout')"
+        onkeydown="logEvent('div onkeydown: ' + event.key)"
+      >
+        Div com eventos de mouse, clique e teclado
+      </div>
+
+      <p>
+        <span
+          class="pseudo-test"
+          onclick="this.innerHTML = 'Span alterado pelo onclick'; logEvent('span onclick')"
+        >
+          Span clicável e com :hover
+        </span>
+      </p>
+
+      <button type="button" onclick="domTest()">
+        Criar elemento no DOM
+      </button>
+
+      <button type="button" onclick="removeLastDynamic()">
+        Remover último elemento
+      </button>
+
+      <button type="button" onclick="attributeTest()">
+        Alterar atributos
+      </button>
+
+      <button type="button" onclick="classTest()">
+        Alternar classe
+      </button>
+
+      <button type="button" onclick="timerTest()">
+        Testar setTimeout
+      </button>
+
+      <button type="button" onclick="storageTest()">
+        Testar localStorage
+      </button>
+
+      <button type="button" onclick="cookieTest()">
+        Testar cookie
+      </button>
+
+      <button type="button" onclick="locationTest()">
+        Mostrar location
+      </button>
+
+      <button type="button" onclick="userAgentTest()">
+        Mostrar User-Agent
+      </button>
+
+      <button type="button" onclick="clearLog()">
+        Limpar log
+      </button>
+
+      <div id="dynamic-container">
+        Elementos dinâmicos:
+      </div>
+
+      <h3>Log</h3>
+
+      <div id="event-log">Inicializando...</div>
+    </section>
+
+    <section>
+      <h2>Caracteres e entidades</h2>
+
+      <p>
+        Acentuação: á é í ó ú ç ã õ â ê ô ü
+      </p>
+
+      <p>
+        Entidades:
+        &lt;
+        &gt;
+        &amp;
+        &quot;
+        &copy;
+        &reg;
+        &trade;
+        &nbsp;
+        &#9733;
+        &#x2605;
+      </p>
+
+      <p>
+        Unicode: ★ ☀ ☂ ☎ → ← ↑ ↓ € ¥ £
+      </p>
+    </section>
+
+    <section>
+      <h2>Conteúdo escondido</h2>
+
+      <div hidden>
+        Elemento com atributo hidden.
+      </div>
+
+      <div class="hidden-by-css">
+        Elemento com display none.
+      </div>
+
+      <div style="visibility: hidden;">
+        Elemento com visibility hidden.
+      </div>
+
+      <noscript>
+        JavaScript está desativado.
+      </noscript>
+    </section>
+
+  </main>
+
+  <footer>
+    <hr>
+    Página de teste Opera Mini OBML.
+  </footer>
+
+  <script>
+    var dynamicCounter = 0;
+    var boxLarge = false;
+    var boxBorderChanged = false;
+
+    function logEvent(message) {
+      var log = document.getElementById("event-log");
+
+      if (!log) {
+        return;
+      }
+
+      var now = new Date();
+      var time =
+        pad(now.getHours()) + ":" +
+        pad(now.getMinutes()) + ":" +
+        pad(now.getSeconds());
+
+      if (log.innerHTML === "Inicializando...") {
+        log.innerHTML = "";
+      }
+
+      log.innerHTML +=
+        "[" + time + "] " +
+        escapeHtml(String(message)) +
+        "<br>";
+
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function pad(value) {
+      return value < 10 ? "0" + value : String(value);
+    }
+
+    function escapeHtml(value) {
+      return value
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function bodyClick(event) {
+      var target = event.target || event.srcElement;
+      var tag = target && target.tagName
+        ? target.tagName.toLowerCase()
+        : "desconhecido";
+
+      logEvent("body onclick, target=" + tag);
+    }
+
+    function inputChanged(input) {
+      logEvent("input oninput: " + input.value);
+
+      var box = document.getElementById("box-model-test");
+
+      if (box) {
+        box.setAttribute("data-last-input", input.value);
+      }
+    }
+
+    function buttonClicked(button) {
+      logEvent("button onclick");
+
+      button.innerHTML = "Botão clicado";
+
+      setTimeout(function () {
+        button.innerHTML = "Elemento button";
+      }, 1000);
+    }
+
+    function formSubmit(event) {
+      logEvent("form onsubmit");
+
+      if (event && event.preventDefault) {
+        event.preventDefault();
+      }
+
+      alert("Submit capturado pelo JavaScript");
+      return false;
+    }
+
+    function changeBoxColor(color) {
+      var box = document.getElementById("box-model-test");
+      box.style.backgroundColor = color;
+
+      logEvent("background alterado para " + color);
+    }
+
+    function fileChanged(input) {
+      var fileName = "";
+
+      if (input.files && input.files.length > 0) {
+        fileName = input.files[0].name;
+      } else {
+        fileName = input.value;
+      }
+
+      logEvent("arquivo selecionado: " + fileName);
+    }
+
+    function toggleBoxSize() {
+      var box = document.getElementById("box-model-test");
+
+      boxLarge = !boxLarge;
+
+      if (boxLarge) {
+        box.style.width = "280px";
+        box.style.height = "150px";
+        box.style.padding = "25px";
+        box.style.margin = "30px";
+      } else {
+        box.style.width = "220px";
+        box.style.height = "100px";
+        box.style.padding = "12px 18px 14px 20px";
+        box.style.margin = "20px 15px 25px 10px";
+      }
+
+      logEvent("box grande=" + boxLarge);
+    }
+
+    function toggleBoxBorder() {
+      var box = document.getElementById("box-model-test");
+
+      boxBorderChanged = !boxBorderChanged;
+
+      if (boxBorderChanged) {
+        box.style.borderWidth = "12px";
+        box.style.borderStyle = "dashed";
+        box.style.borderColor = "#00ff00";
+      } else {
+        box.style.borderWidth = "6px";
+        box.style.borderStyle = "solid";
+        box.style.borderColor = "#ff6600";
+      }
+
+      logEvent("borda alterada=" + boxBorderChanged);
+    }
+
+    function toggleDisplay() {
+      var box = document.getElementById("box-model-test");
+
+      if (box.style.display === "none") {
+        box.style.display = "block";
+        logEvent("box mostrado");
+      } else {
+        box.style.display = "none";
+        logEvent("box ocultado");
+      }
+    }
+
+    function domTest() {
+      dynamicCounter++;
+
+      var container = document.getElementById("dynamic-container");
+      var element = document.createElement("div");
+
+      element.className = "dynamic-element";
+      element.setAttribute("data-counter", dynamicCounter);
+
+      element.style.margin = "4px";
+      element.style.padding = "5px";
+      element.style.border = "1px solid #000099";
+      element.style.backgroundColor = "#eeeeff";
+
+      element.innerHTML =
+        "Elemento dinâmico número " +
+        dynamicCounter +
+        ' <button type="button" onclick="this.parentNode.innerHTML += \' clicado\'">Clique</button>';
+
+      container.appendChild(element);
+
+      logEvent("elemento criado: " + dynamicCounter);
+    }
+
+    function removeLastDynamic() {
+      var elements = document.getElementsByClassName("dynamic-element");
+
+      if (elements.length === 0) {
+        logEvent("nenhum elemento dinâmico para remover");
+        return;
+      }
+
+      var last = elements[elements.length - 1];
+      last.parentNode.removeChild(last);
+
+      logEvent("último elemento removido");
+    }
+
+    function attributeTest() {
+      var image = document.getElementById("test-image");
+
+      var oldAlt = image.getAttribute("alt");
+      image.setAttribute(
+        "alt",
+        "Alt alterado em " + new Date().getTime()
+      );
+
+      image.setAttribute("data-obml-test", "123");
+
+      logEvent(
+        "atributo alt anterior=" +
+        oldAlt +
+        "; data-obml-test=" +
+        image.getAttribute("data-obml-test")
+      );
+    }
+
+    function classTest() {
+      var div = document.getElementById("click-div");
+
+      if (div.className === "display-block") {
+        div.className = "";
+      } else {
+        div.className = "display-block";
+      }
+
+      logEvent("className=" + div.className);
+    }
+
+    function timerTest() {
+      logEvent("setTimeout iniciado");
+
+      setTimeout(function () {
+        logEvent("setTimeout executado após 1500 ms");
+      }, 1500);
+    }
+
+    function storageTest() {
+      try {
+        var current = parseInt(
+          localStorage.getItem("obmlCounter") || "0",
+          10
+        );
+
+        current++;
+
+        localStorage.setItem(
+          "obmlCounter",
+          String(current)
+        );
+
+        logEvent("localStorage obmlCounter=" + current);
+      } catch (error) {
+        logEvent("localStorage erro: " + error.message);
+      }
+    }
+
+    function cookieTest() {
+      try {
+        document.cookie =
+          "obmlTest=valor123; path=/; SameSite=Lax";
+
+        logEvent("document.cookie=" + document.cookie);
+      } catch (error) {
+        logEvent("cookie erro: " + error.message);
+      }
+    }
+
+    function locationTest() {
+      logEvent(
+        "location.href=" + window.location.href +
+        " | protocol=" + window.location.protocol +
+        " | host=" + window.location.host +
+        " | pathname=" + window.location.pathname
+      );
+    }
+
+    function userAgentTest() {
+      logEvent("navigator.userAgent=" + navigator.userAgent);
+      logEvent("navigator.platform=" + navigator.platform);
+      logEvent("navigator.language=" + navigator.language);
+      logEvent("screen=" + screen.width + "x" + screen.height);
+    }
+
+    function clearLog() {
+      document.getElementById("event-log").innerHTML = "";
+    }
+  </script>
+</body>
+</html>
